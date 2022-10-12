@@ -29,7 +29,13 @@ export class Modal extends Component {
   render() {
     return createPortal(
       <ModalBackdrop onClick={this.handleBackdropClick}>
-        <ModalContent>{this.props.children}</ModalContent>
+        <ModalContent>
+          <img
+            src={this.props.data.url}
+            alt={this.props.data.alt}
+            width="900"
+          />
+        </ModalContent>
       </ModalBackdrop>,
       modalRoot
     );

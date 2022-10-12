@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FiSearch } from 'react-icons/fi';
 import { Formik } from 'formik';
 import {
   SearchbarBox,
@@ -21,6 +22,7 @@ export const Searchbar = ({ onSubmit }) => {
       >
         <SearchForm>
           <SearchFormBtn type="submit">
+            <FiSearch />
             <SearchFormBtnText>Search</SearchFormBtnText>
           </SearchFormBtn>
 

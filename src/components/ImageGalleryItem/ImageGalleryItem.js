@@ -4,10 +4,9 @@ import {
   ImageGalleryImg,
 } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = ({ id, preview, alt, url, onShowLargeImg }) => {
+export const ImageGalleryItem = ({ preview, alt, url, onShowLargeImg }) => {
   return (
     <ImageGalleryElement
-      key={id}
       onClick={() => {
         onShowLargeImg({ url, alt });
       }}
@@ -18,7 +17,6 @@ export const ImageGalleryItem = ({ id, preview, alt, url, onShowLargeImg }) => {
 };
 
 ImageGalleryItem.propTypes = {
-  id: PropTypes.number.isRequired,
   url: PropTypes.string.isRequired,
   preview: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,

@@ -42,9 +42,10 @@ export class App extends Component {
 
   
   async componentDidUpdate(_, prevState) {
-    const { page, query, } = this.state;
+    const { page, query} = this.state;
     if (prevState.page !== page || prevState.query !== query) {
       API.params.q = query;
+      API.params.page = query !== prevState.query ? 1 : page;
       try {
         this.setState({ isLoading: true });
         const data = await API.getData(API.params);
@@ -75,18 +76,18 @@ export class App extends Component {
   }
   
   render() {
-    const { items, isLoading, showModal, imgData } = this.state;
+    const { items, isLoading, showModal, imgData, page, pages } = this.state;
     return (
     <Box>
         <Searchbar onSubmit={this.handleSearchSubmit} />
         {isLoading && <Loader />}
         {items.length > 0 && <ImageGallery items={items} onShowLargeImg={this.toggleModal} />}
         {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img alt={imgData.alt} src={imgData.url} />
+          <Modal data={ imgData} onClose={this.toggleModal}>
+            {/* <img alt={imgData.alt} src={imgData.url} /> */}
           </Modal>
         )}
-        <Button onLoadMore={ this.loadMore} />
+        {items.length > 0 && page < pages && (<Button onLoadMore={this.loadMore} />)}
     </Box>
   );
   }
