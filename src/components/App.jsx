@@ -1,16 +1,93 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
+import { Component } from "react";
+import * as API from '../API/Api';
+import { Button } from "./Button/Button";
+import { Searchbar } from "./Searchbar/Searchbar";
+import { ImageGallery } from "./ImageGallery/ImageGallery";
+import { Box } from "./Box.styled";
+import { Loader } from "./Loader/Loader";
+import { Modal } from "./Modal/Modal";
+
+export class App extends Component {
+  state = {
+    page: 1,
+    pages: 0,
+    query: '',
+    items: [],
+    isLoading: false,
+    showModal: false,
+  }
+
+  handleSearchSubmit = (search) => {
+    console.log(search.searchKey);
+    this.setState({
+      page: 1,
+      query: search.searchKey,
+      items: [],
+    })
+  }
+
+  loadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1
+    }))
+  }
+
+  toggleModal = imgData => {
+    console.log(imgData);
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+      imgData,
+    }));
+  };
+
+  
+  async componentDidUpdate(_, prevState) {
+    const { page, query, } = this.state;
+    if (prevState.page !== page || prevState.query !== query) {
+      API.params.q = query;
+      try {
+        this.setState({ isLoading: true });
+        const data = await API.getData(API.params);
+        const { total, hits } = data;
+        console.log(hits);
+       
+        if (query !== prevState.query) {
+          this.setState({
+            items: hits,
+            page: API.params.page,
+            total: total,
+            pages: Math.ceil(total / API.params.per_page),
+            isLoading: false,
+          });
+        } else {
+          this.setState(prevState => ({
+            items: [...prevState.items, ...hits],
+            page: API.params.page,
+            isLoading: false,
+          }));
+        }
+      } catch (error) {       
+        console.log(error);
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    }
+  }
+  
+  render() {
+    const { items, isLoading, showModal, imgData } = this.state;
+    return (
+    <Box>
+        <Searchbar onSubmit={this.handleSearchSubmit} />
+        {isLoading && <Loader />}
+        {items.length > 0 && <ImageGallery items={items} onShowLargeImg={this.toggleModal} />}
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <img alt={imgData.alt} src={imgData.url} />
+          </Modal>
+        )}
+        <Button onLoadMore={ this.loadMore} />
+    </Box>
   );
+  }
 };
