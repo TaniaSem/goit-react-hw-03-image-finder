@@ -40,9 +40,9 @@ export class App extends Component {
     }));
   };
 
-  
+
   async componentDidUpdate(_, prevState) {
-    const { page, query} = this.state;
+    const { page, query } = this.state;
     if (prevState.page !== page || prevState.query !== query) {
       API.params.q = query;
       API.params.page = query !== prevState.query ? 1 : page;
@@ -51,11 +51,10 @@ export class App extends Component {
         const data = await API.getData(API.params);
         const { total, hits } = data;
         console.log(hits);
-       
+
         if (query !== prevState.query) {
           this.setState({
             items: hits,
-            page: API.params.page,
             total: total,
             pages: Math.ceil(total / API.params.per_page),
             isLoading: false,
@@ -67,28 +66,28 @@ export class App extends Component {
             isLoading: false,
           }));
         }
-      } catch (error) {       
+      } catch (error) {
         console.log(error);
       } finally {
         this.setState({ isLoading: false });
       }
     }
   }
-  
+
   render() {
     const { items, isLoading, showModal, imgData, page, pages } = this.state;
     return (
-    <Box>
+      <Box>
         <Searchbar onSubmit={this.handleSearchSubmit} />
         {isLoading && <Loader />}
         {items.length > 0 && <ImageGallery items={items} onShowLargeImg={this.toggleModal} />}
         {showModal && (
-          <Modal data={ imgData} onClose={this.toggleModal}>
+          <Modal data={imgData} onClose={this.toggleModal}>
             {/* <img alt={imgData.alt} src={imgData.url} /> */}
           </Modal>
         )}
         {items.length > 0 && page < pages && (<Button onLoadMore={this.loadMore} />)}
-    </Box>
-  );
+      </Box>
+    );
   }
 };
